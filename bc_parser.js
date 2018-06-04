@@ -25,6 +25,7 @@ module.exports = {
   updateAccount: updateAccount,
   addTransactions: addTransactions,
   APIrequest: APIrequest,
+  register: register,
   CheckNewTelegramUsers: CheckNewTelegramUsers,
   telegramRequest: telegramRequest,
   updateTelegramUsres: updateTelegramUsres,
@@ -265,12 +266,12 @@ function processBlock(this_, blocknum, block){
 
 	if (this_.PRODUCERS[block.producer]){
 		this_.PRODUCERS[block.producer].produced += 1;
-		this_.PRODUCERS[block.producer].tx_count += block.input_transactions.length;
+		this_.PRODUCERS[block.producer].tx_count += block.transactions.length;
 		this_.PRODUCERS[block.producer].tx_sum += 0;  //!!!! ADD SUMS
 	} else {
 		this_.PRODUCERS[block.producer] = {};
 		this_.PRODUCERS[block.producer].produced = 1;
-		this_.PRODUCERS[block.producer].tx_count = block.input_transactions.length;
+		this_.PRODUCERS[block.producer].tx_count = block.transactions.length;
 		this_.PRODUCERS[block.producer].tx_sum = 0;  //!!!! ADD SUMS
 	}
 
@@ -278,20 +279,20 @@ function processBlock(this_, blocknum, block){
 	this_.announceMsg(this_, "blockprod_update", this_.PRODUCERS[block.producer]);
 
 
-    if (block.input_transactions.length > 0){
+    if (block.transactions.length > 0){
     	this_.STATS.total_txblocks_count ++;
 
-    	this_.STATS.total_tx_count += block.input_transactions.length;
+    	this_.STATS.total_tx_count += block.transactions.length;
 
         this_.processTransaction(this_, block.block_num, block);
 
         //console.log(this_.PRODUCERS);
     	//console.log('-----------------------------');
-    	//console.log(block.input_transactions);
+    	//console.log(block.transactions);
     	//console.log('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
-    	//console.log(block.input_transactions[0].data.actions);
+    	//console.log(block.transactions[0].data.actions);
     	//console.log('==============================');
-    	//console.log(JSON.stringify(block.input_transactions));
+    	//console.log(JSON.stringify(block.transactions));
     	//console.log('');
     	///console.log('');
 
@@ -304,7 +305,7 @@ function processBlock(this_, blocknum, block){
 
 function processTransaction(this_, blocknum, block){
     //console.log(txs);
-	var txs = block.input_transactions;
+	var txs = block.transactions;
 	//var txs_id =block.regions[0];
 
 	for (var t in txs) {
@@ -678,6 +679,24 @@ function APIrequest(msg, socket){  //data = '{"block_num_or_id": '+blocknum+'}'
 	);
 }
 
+// bp:true
+// bp_name:"eoslijianlin"
+// comment:""
+// http_server_address:"0.0.0.0:8888"
+// https_server_address:""
+// location:"china"
+// organisation:"tester"
+// p2p_listen_endpoint:"0.0.0.0:9876"
+// p2p_server_address:"127.0.0.1:9876"
+// pin:"123456"
+// pub_key:"EOS72h1oQLzaZSvwqPbz6pmiyT6zZvcoJobMtPsR8KdDcgp8cR985"
+// telegram:""
+// url:""
+
+function register(msg, socket){
+	console.log("register msg:",msg)
+	socket.emit("register_res",{stdout:"success"})
+}
 //--------------Telegarmm
 
 function CheckNewTelegramUsers(this_){

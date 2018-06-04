@@ -5,24 +5,24 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="Description" content="EOS Network Monitor. By CryptoLions.io">
 
-	<title>Jungle3 EOS Network Monitor (CryptoLions.io)</title>
+	<title>Jungle EOS Network Monitor (CryptoLions.io)</title>
     <link rel="icon" href="imgs/favicon.png" type="image/x-icon">
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="socket.io/socket.io.js"></script>
 
 	<script  src="vendor/jquery-3.3.1.min.js"></script>
 	<script  src="vendor/popper.min.js"></script>
 	<script  src="vendor/bootstrap.min.js"></script>
 	<script  src="vendor/all_fontawesome_509.js"></script>
 
-    <script src="config.js?3"></script>
-	<script src="js/utils.js?11"></script>
-	<script src="js/check_nodes.js?16"></script>
-	<link rel="stylesheet" href="style.css?20">
+    <script src="vendor/jquery.tablednd.js"></script>
 
-	</style>
+    <script src="config.js?25"></script>
+	<script src="js/utils.js?15"></script>
+	<script src="js/check_nodes.js?51"></script>
+	<link rel="stylesheet" href="style.css?29">
+
 </head>
 <body class="bg">
     <div class="page">
@@ -32,10 +32,11 @@
 
 
 		<h1>EOS Jungle Testnet Monitor (<a target="_blank" href="https://github.com/CryptoLions/EOS-Jungle-Testnet">GitHub</a>)</h1>
-	    <b>dawn-v3.0.0</b> | <a href="#" id="apiPopup">API</a> | <a href="#" id="p2pPopup">P2P List</a> | <a href="http://t.me/JungleTestnet_bot" target="_blank">Telegram Bot</a>    |  Connected Users: <span class="green" id="connectedUsers">--</span></span>
+	    v1.0.1 | Max-TPS: <span class="green" id="maxTPS">--</span> | Connected Users: <span class="green" id="connectedUsers">--</span> <BR>
+	    <a href="#register" id="registerPopup">Register</a> | <a href="#account" id="accountPopup">Create Account</a> | <a href="#accountInfo" id="accountInfoPopup">Account Info</a> | <a href="#faucet" id="faucetPopup">Faucet</a> | <a href="#api" id="apiPopup">API</a> | <a href="#p2p" id="p2pPopup">P2P List</a> <!--| <a href="#bp" id="bpsPopup">BPs</a--> | <a href="http://t.me/JungleTestnet_bot" target="_blank">Telegram Bot</a> | <a href="#map" id="mapPopup">Map</a> </span>
 
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-5">
             	<div class="mainInfo text-left">
 
 					<span class="green" id="lastBlock">--</span>
@@ -50,7 +51,7 @@
 
             	</div>
 			</div>
-			<div class="col-md-6">
+			<div class="col-md-7">
 				<div class="mainInfo">
                     <div class="table-responsive-sm vscroll">
 						<h6> <nobr> Total <span class="green" id="txCount">--</span> Transactions in <span class="green" id="nonEmptyBlockCount">--</span> Blocks</nobr> / <span id="totProcessedBlocks">--</span> Blocks</nobr></h6>
@@ -70,78 +71,144 @@
 
 		<BR><BR>
 
-		<h2>Network Status </h2>
+
+
+		<h2>Network Status</h2>
 
 
 
-		<div id="nodesList"></div>
+		<ul class="nav nav-tabs">
+
+			<a href="#" class="btn btn-success" id="btn_vote">Vote</a>
+			<li class="nav-item"> <a class="nav-link active" id="system-tab" data-toggle="tab" href="#tabSystem" role="tab" aria-controls="tabSystem" aria-selected="true">System</a> </li>
+			<li class="nav-item"> <a class="nav-link" id="manual-tab" data-toggle="tab" href="#tabManual" role="tab" aria-controls="tabManual" aria-selected="true">All Nodes</a> </li>
+           <li class="text-right" style="padding-top:10px;">
+				 &nbsp;&nbsp;&nbsp;&nbsp;
+		        <span class="colorLegend tblrow">&nbsp;&nbsp;&nbsp;&nbsp;</span> - OK
+		        &nbsp; &nbsp;
+		        <span class="colorLegend greentblrow">&nbsp;&nbsp;&nbsp;&nbsp;</span> - Producing
+		        &nbsp; &nbsp;
+		        <span class="colorLegend redtblrow">&nbsp;&nbsp;&nbsp;&nbsp;</span> - No response
+		        &nbsp; &nbsp;
+		        <span class="colorLegend incorrec_version_tblblrow">&nbsp;&nbsp;&nbsp;&nbsp;</span> - Other version
+		        &nbsp; &nbsp;
+		        <span class="colorLegend unsynced_tblblrow">&nbsp;&nbsp;&nbsp;&nbsp;</span> - Unsynced
+		        &nbsp; &nbsp;
+		        <span class="colorLegend incorrec_chainid_tblblrow">&nbsp;&nbsp;&nbsp;&nbsp;</span> - Wrong Chain
+		        &nbsp; &nbsp;
+		        <span class="colorLegend greytblrow">&nbsp;&nbsp;&nbsp;&nbsp;</span> - Disabled
+	        </li>
+		</ul>
 
 
-		<div class="row">
-			<div class="col-sm-12 col-md-12">
+        <div class="tab-content" id="producerlisttabs">
 
+        	<div class="tab-pane fade show active" id="tabSystem" role="tabpanel" aria-labelledby="system-tab">
 
+				<div class="row">
+					<div class="col-sm-12 col-md-12">
+						<div class="table-responsive-sm vscroll">
+							<table class="table table-hover table-sm" id="bpTableSystem">
+								<thead>
+									<tr class="text-center tblheader">
+										<th class='cs0' scope="col"># <a href="#" id="sortNodesSystem"><i class="fas fa-sort-amount-down"></i></a></th>
+										<th class='cs1' scope="col">Name</th>
+										<th class='cs2' scope="col">Answered</th>
+										<th class='cs3' scope="col">Block</th>
+										<th class='cs5' scope="col">Produced</th>
+										<th class='cs4' scope="col">Block</th>
+										<th class='cs7' scope="col"><a href="#" class="showHideAddresInfoSys"><i class="fas fa-minus-circle"></i></a> Address</th>
+										<th class='cs8' scope="col">HTTP</th>
+										<th class='cs9' scope="col">P2P</th>
+										<th class='cs6' scope="col">Version</th>
+										<th class='cs11' scope="col">Location</th>
 
-				<div class="table-responsive-sm vscroll">
-					<table class="table table-hover table-sm" id="bpTable">
-						<thead>
-							<tr class="text-center tblheader">
-								<th class='c0' scope="col">#</th>
-								<th class='c1' scope="col">Name</th>
-								<th class='c2' scope="col">Answered</th>
-								<th class='c3' scope="col">Block</th>
-								<th class='c5' scope="col">Produced</th>
-								<th class='c4' scope="col">Block</th>
-								<th class='c7' scope="col"><a href="#" class="showHideAddresInfo"><i class="fas fa-minus-circle"></i></a> Address</th>
-								<th class='c8' scope="col">HTTP</th>
-								<th class='c9' scope="col">P2P</th>
-								<th class='c6' scope="col">Version</th>
+										<th class='cs12' scope="col" title="total blocks in blockchain produced by this name">Blocks</th>
+										<th class='cs13' scope="col" title="Processed transactions producer">TXs</th>
 
-								<th class='c12' scope="col" title="total blocks in blockchain produced by this name">Blocks</th>
-								<th class='c13' scope="col" title="Processed transactions producer">TXs</th>
+										<th class='cs10' scope="col"><a href="#" class="showHideAddresInfoSys" id="showHideAddresInfoSys"><i class="fas fa-plus-circle"></i></a> Organisation</th>
+										<th class='cs14' scope="col">Votes</th>
 
-								<th class='c10' scope="col"><a href="#" class="showHideAddresInfo" id="showHideAddresInfo"><i class="fas fa-plus-circle"></i></a> Organisation</th>
-								<th class='c11' scope="col">Location</th>
-							</tr>
-						</thead>
-						<tbody id="table-body">
-						</tbody>
-					</table>
+									</tr>
+								</thead>
+								<tbody id="table-bodySystem">
+								</tbody>
+							</table>
+						</div>
+					</div>
 				</div>
 
-                <h2>Nodes</h2>
-				<div class="table-responsive-sm vscroll">
-					<table class="table table-hover table-sm" id="nodeTable">
-						<thead>
-							<tr class="text-center tblheader">
-								<th class='cn0' scope="col">#</th>
-								<th class='cn1' scope="col">Name</th>
-								<th class='cn2' scope="col">Answered</th>
-								<th class='cn3' scope="col">Block</th>
-								<th class='cn4' scope="col">Address</th>
-								<th class='cn5' scope="col">HTTP</th>
-								<th class='cn6' scope="col">P2P</th>
-								<th class='cn7' scope="col">Version</th>
-								<th class='cn8' scope="col">Agent Name</th>
-								<th class='cn9' scope="col">Location</th>
-							</tr>
-						</thead>
-						<tbody id="table-body-node">
-						</tbody>
-					</table>
+        	</div>
+
+        	<div class="tab-pane fade show" id="tabManual" role="tabpanel" aria-labelledby="manual-tab">
+
+				<div id="nodesList"></div>
+				<div class="row">
+					<div class="col-sm-12 col-md-12">
+						<div class="table-responsive-sm vscroll">
+							<table class="table table-hover table-sm" id="bpTable">
+								<thead>
+									<tr class="text-center tblheader">
+										<th class='c0' scope="col"># <a href="#" id="sortNodes"><i class="fas fa-sort-amount-down"></i></a></th>
+										<th class='c1' scope="col">Name</th>
+										<th class='c2' scope="col">Answered</th>
+										<th class='c3' scope="col">Block</th>
+										<th class='c5' scope="col">Produced</th>
+										<th class='c4' scope="col">Block</th>
+										<th class='c7' scope="col"><a href="#" class="showHideAddresInfo" ><i class="fas fa-minus-circle"></i></a> Address</th>
+										<th class='c8' scope="col">HTTP</th>
+										<th class='c9' scope="col">P2P</th>
+										<th class='c6' scope="col">Version</th>
+
+										<th class='c12' scope="col" title="total blocks in blockchain produced by this name">Blocks</th>
+										<th class='c13' scope="col" title="Processed transactions producer">TXs</th>
+
+										<th class='c10' scope="col"><a href="#" class="showHideAddresInfo" id="showHideAddresInfo"><i class="fas fa-plus-circle"></i></a> Organisation</th>
+										<th class='c11' scope="col">Location</th>
+									</tr>
+								</thead>
+								<tbody id="table-body">
+								</tbody>
+							</table>
+						</div>
+
+		                <h2>Non producing Nodes</h2>
+						<div class="table-responsive-sm vscroll">
+							<table class="table table-hover table-sm" id="nodeTable">
+								<thead>
+									<tr class="text-center tblheader">
+										<th class='cn0' scope="col">#</th>
+										<th class='cn1' scope="col">Name</th>
+										<th class='cn2' scope="col">Answered</th>
+										<th class='cn3' scope="col">Block</th>
+										<th class='cn4' scope="col">Address</th>
+										<th class='cn5' scope="col">HTTP</th>
+										<th class='cn6' scope="col">P2P</th>
+										<th class='cn7' scope="col">Version</th>
+										<th class='cn8' scope="col">Agent Name</th>
+										<th class='cn9' scope="col">Location</th>
+									</tr>
+								</thead>
+								<tbody id="table-body-node">
+								</tbody>
+							</table>
+						</div>
+
+					</div>
 				</div>
 
-			</div>
+
+
+        	</div>
 		</div>
 
 		<BR><BR>
 		<span class="footer">
-			<span  class="fotertext" >2018, Created by  <a class="foterlink" target="_blank" href="http://CryptoLions.io">CryptoLions.io</a> | <a  class="foterlink" target="_blank" href="https://github.com/CryptoLions">GitHub</a> v0.5.2</span>
+			<span  class="fotertext" >2018, Created by  <a class="foterlink" target="_blank" href="http://CryptoLions.io">CryptoLions.io</a> | <a  class="foterlink" target="_blank" href="https://github.com/CryptoLions">GitHub</a> v0.5.7</span>
 		</span>
 
 
     </div>
-
 
 
     </center>
@@ -167,7 +234,7 @@
         </div>
         <div class="modal-body" id="modal_body">
 
-
+             <div id='map'>maps error</div>
         </div>
         <!--div class="modal-footer">
 
@@ -180,6 +247,231 @@
 
 
 	</div>
+
+<div id="RegisterForm" class="hide">
+   <div id="reg_alert" class="alert alert-danger hide">
+	</div>
+
+	<div class="tab-content" id="reg-tabs">
+	  <div id="tab-reg1" class="tab-pane active">
+
+
+		<form class="form-horizontal" id="reg_form" action='' method="POST">
+		  <fieldset>
+
+		    <div class="form-group row">
+		      <!-- Node Name -->
+		      <label for="reg_nodename" class="col-4 col-form-label text-right">Producer Account *</label>
+		      <div class="col-8">
+		      	<input type="text" id="reg_nodename" name="reg_nodename" placeholder="lion" class="form-control" maxlength="20" value="">
+		      	<i>(length 12, lowercase a-z, 1-5)</i>
+		      </div>
+		    </div>
+
+	        <div class="form-group row">
+		      <!-- organisation -->
+		      <label for="reg_organisation" class="col-4 col-form-label text-right">Organisation *</label>
+		      <div class="col-8">
+	       	  	<input type="text" id="reg_organisation" name="reg_organisation" placeholder="CryptoLions.io" class="form-control" maxlength="16" value="">
+	       	  </div>
+		    </div>
+
+		    <div class="form-group row">
+		      <!-- location -->
+		      <label for="reg_location" class="col-4 col-form-label text-right">Server location country *</label>
+		      <div class="col-8">
+		      	<input type="text" id="reg_location" name="reg_location" placeholder="Ukraine, Lviv" class="form-control" maxlength="20" value="">
+		      </div>
+		    </div>
+
+		    <div class="form-group row">
+		      <!-- node_addr -->
+		      <label for="reg_http_server_address" class="col-4 col-form-label text-right">HTTP server address *</label>
+		      <div class="col-8">
+		      	<input type="text" id="reg_http_server_address" name="reg_http_server_address" placeholder="0.0.0.0:8888" class="form-control"  maxlength="45" value="0.0.0.0:8888">
+		      </div>
+		    </div>
+
+		    <div class="form-group row">
+		      <!-- HTTP port -->
+		      <label for="reg_p2p_listen_endpoint" class="col-4 col-form-label text-right">P2P listen endpoint *</label>
+		      <div class="col-8">
+		      	<input type="text" id="reg_p2p_listen_endpoint " name="reg_p2p_listen_endpoint" placeholder="0.0.0.0:9876" class="form-control"  maxlength="45" value="0.0.0.0:9876">
+		      </div>
+		    </div>
+
+
+		    <div class="form-group row">
+		      <!-- P2P port -->
+		      <label for="reg_p2p_server_address" class="col-4 col-form-label text-right">P2P server address *</label>
+		      <div class="col-8">
+		      	<input type="text" id="reg_p2p_server_address" name="reg_p2p_server_address" placeholder="123.123.123.123:9876" class="form-control" maxlength="45" value="YOUR_SERVER_IP_ADDRESS:9876">
+		      </div>
+            </div>
+
+		    <div class="form-group row">
+		      <!-- HTTP port -->
+		      <label for="reg_https_server_address" class="col-4 col-form-label text-right">HTTPS server address </label>
+		      <div class="col-8">
+		      	<input type="text" id="reg_https_server_address" name="reg_https_server_address" placeholder="0.0.0.0:443" value="" class="form-control"  maxlength="45">
+		      	<i>If you use ssl port, please your certificate info into config.ini after installation.</i>
+		      </div>
+
+		    </div>
+
+
+
+
+			<div class="form-group row">
+				<div class="col-4">
+				</div>
+				<div class="col-8">
+					<div class="checkbox">
+						<label>
+							<input id="reg_isBP" type="checkbox" name="reg_isBP" checked> Block Producer Node
+						</label>
+					</div>
+				</div>
+			</div>
+
+
+		    <div class="form-group row">
+		      <!-- Pub Key -->
+		      <label for="reg_pub_key" class="col-4 col-form-label text-right">Producer Public Key *</label>
+		      <div class="col-8">
+		      	<input type="text" id="reg_pub_key" name="reg_pub_key" placeholder="EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV" class="form-control"  maxlength="60" value="">
+		      </div>
+		    </div>
+
+		    <div class="form-group row">
+		      <!-- Comment -->
+		      <label for="reg_url" class="col-4 col-form-label text-right">URL</label>
+		      <div class="col-8">
+		      	<input type="text" id="reg_url" name="reg_url" placeholder="http://cryptolions.io" value="" class="form-control">
+		      </div>
+		    </div>
+
+
+		    <div class="form-group row">
+		      <!-- Telegram -->
+		      <label for="reg_telegram" class="col-4 col-form-label text-right">Telegram @</label>
+		      <div class="col-8">
+		      	<input type="text" id="reg_telegram" name="reg_telegram" placeholder="" class="form-control">
+		      </div>
+		    </div>
+
+
+		    <div class="form-group row">
+		      <!-- Comment -->
+		      <label for="reg_comments" class="col-4 col-form-label text-right">Comments</label>
+		      <div class="col-8">
+		      	<input type="text" id="reg_comments" name="reg_comments" placeholder="" class="form-control">
+		      </div>
+		    </div>
+
+
+		    <div class="form-group row" >
+		      <!-- Password-->
+		      <label for="reg_password" class="col-4 col-form-label text-right" >Pin *</label>
+		      <div class="col-8">
+		      	<input type="password" id="reg_password" name="reg_password" placeholder="" class="form-control" value="">
+		      </div>
+		    </div>
+
+		    <div class="form-group row" class="col-4 col-form-label">
+		      <!-- Password -->
+		      <label for="reg_password_confirm" class="col-4 col-form-label text-right">Pin (Confirm) *</label>
+		      <div class="col-8">
+		      	<input type="password" id="reg_password_confirm" name="reg_password_confirm" placeholder="" class="form-control" value="">
+		      </div>
+		    </div>
+
+		      <!-- Button -->
+		      <button type="button" id="reg_btn_register" class="btn btn-success">Register</button>
+
+		  </fieldset>
+		</form>
+
+
+	  </div>
+	  <div id="tab-reg2" class="tab-pane">
+	      <p>Some content in menu 1.</p>
+	  </div>
+	  <div id="tab-reg3" class="tab-pane">
+	    <h3>Menu 2</h3>
+	    <p>Some content in menu 2.</p>
+	  </div>
+	</div>
+
+
+</div>
+
+
+<div id="CreateAccountForm" class="hide">
+   <div id="reg_alert" class="alert alert-danger hide">
+	</div>
+
+	<form class="form-horizontal" id="reg_account" action='' method="POST">
+	  <fieldset>
+
+	    <div class="form-group row">
+	      <!-- Node Name -->
+	      <label for="reg_accname" class="col-4 col-form-label text-right">Account name </label>
+	      <div class="col-8">
+	      	<input type="text" id="reg_accname" name="reg_accname" placeholder="lion" class="form-control" maxlength="20">
+	      	(a-z,1-5 are allowed only. Length 12)
+	      </div>
+	    </div>
+
+        <div class="form-group row">
+	      <!-- organisation -->
+	      <label for="reg_pubkey1" class="col-4 col-form-label text-right">Owner Public Key </label>
+	      <div class="col-8">
+       	  	<input type="text" id="reg_pubkey1" name="reg_pubkey1" placeholder="EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV" class="form-control" maxlength="64">
+       	  </div>
+	    </div>
+
+        <div class="form-group row">
+	      <!-- organisation -->
+	      <label for="reg_pubkey2" class="col-4 col-form-label text-right">Active Public Key </label>
+	      <div class="col-8">
+       	  	<input type="text" id="reg_pubkey2" name="reg_pubkey2" placeholder="EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV" class="form-control" maxlength="64">
+       	  </div>
+	    </div>
+
+	      <!-- Button -->
+	      <button type="button" id="reg_btn_create" class="btn btn-success">Create</button>
+
+	  </fieldset>
+	</form>
+	<span id="reg_acc_res"></span>
+
+</div>
+
+<div id="FaucetForm" class="hide">
+   <div id="reg_alert" class="alert alert-danger hide">
+	</div>
+
+	<form class="form-horizontal" id="faucet_form" action='' method="POST">
+	  <fieldset>
+
+	    <div class="form-group row">
+	      <!-- Node Name -->
+	      <label for="reg_accnamef" class="col-4 col-form-label text-right">Account name </label>
+	      <div class="col-8">
+	      	<input type="text" id="reg_accnamef" name="reg_accnamef" placeholder="lion" class="form-control" maxlength="20">
+	      </div>
+	    </div>
+
+	      <!-- Button -->
+	      <button type="button" id="faucet_btn" class="btn btn-success">Send Coins</button>
+
+	  </fieldset>
+	</form>
+	<span id="reg_faucet_res"></span>
+
+</div>
+
 
 </body>
 </html>

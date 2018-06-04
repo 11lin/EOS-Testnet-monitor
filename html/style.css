@@ -23,6 +23,10 @@ body, html {
     .hidesm { display: none; }
 }
 
+.hide {
+	display: none;
+}
+
 .mainInfo {	font-size: 23px;
 	/*background-color: rgb(255, 255, 255, 0.6);*/
 	padding: 10px 30px;
@@ -90,6 +94,22 @@ body, html {
 	color: white;
 }
 
+.greytblrow{
+	/*background-color: rgb(17,168,39,0.8) !important;*/
+	background-color: #858585 !important;
+	/* IE 8 */
+  	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+
+  	/* IE 5-7 */
+  	filter: alpha(opacity=80);
+
+	/* Netscape */
+	-moz-opacity: 0.8;
+	-khtml-opacity: 0.8;
+	opacity: 0.8;
+
+	color: #494949;
+}
 .redtblrow{
 	/*background-color: rgb(255,4,4,0.6)  !important;*/
 
@@ -126,6 +146,57 @@ body, html {
 
 }
 
+.incorrec_version_tblblrow{
+	/*background-color: rgb(17,168,39,0.8) !important;*/
+	background-color: #FFFF9B !important;
+	/* IE 8 */
+  	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+
+  	/* IE 5-7 */
+  	filter: alpha(opacity=80);
+
+	/* Netscape */
+	-moz-opacity: 0.8;
+	-khtml-opacity: 0.8;
+	opacity: 0.8;
+
+	color: black;
+}
+
+.incorrec_chainid_tblblrow{
+	/*background-color: rgb(17,168,39,0.8) !important;*/
+	background-color: #826208 !important;
+	/* IE 8 */
+  	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+
+  	/* IE 5-7 */
+  	filter: alpha(opacity=80);
+
+	/* Netscape */
+	-moz-opacity: 0.8;
+	-khtml-opacity: 0.8;
+	opacity: 0.8;
+
+	color: black;
+}
+
+.unsynced_tblblrow{
+	/*background-color: rgb(17,168,39,0.8) !important;*/
+	background-color: #C7A5EF !important;
+	/* IE 8 */
+  	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+
+  	/* IE 5-7 */
+  	filter: alpha(opacity=50);
+
+	/* Netscape */
+	-moz-opacity: 0.8;
+	-khtml-opacity: 0.8;
+	opacity: 0.8;
+
+	color: white;
+}
+
 .footer{	/*background-color: rgb(255, 255, 255, 0.4);*/
 	background-color: #FFF;
 	/* IE 8 */
@@ -140,6 +211,9 @@ body, html {
 	opacity: 0.4;
 
 	padding: 10px 30px;
+}
+
+.colorLegend{	border: 1px #000 solid;
 }
 
 .fotertext{
@@ -280,4 +354,78 @@ body, html {
 }
 
 #txTable{	font-size: 12px;
+}
+
+#map {
+  height: 430px;
+  position: relative;
+  width: 100%;
+}
+
+.maps-frame {
+  height: 430px;
+  width: 100%;
+}
+
+.kd-tabbed-vert.header-links .kd-tabbutton a {
+  color: #757575;
+  display: inline-block;
+  height: 100%;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.kd-tabbed-vert.header-links .kd-tabbutton {
+  padding: 0;
+}
+
+.kd-tabbed-vert.header-links .kd-tabbutton.selected a {
+  color: #03a9f4;
+}
+
+.kd-tabbed-vert.header-links .kd-tabbutton a:focus {
+  text-decoration: none;
+}
+
+p.top-desc {
+  padding: 1em 1em .1em 1em;
+}
+
+p.bottom-desc {
+  padding: 0em 1em 1em 1em;
+}
+
+.terminal {	background-color: #222;
+	color: #00FF00;
+	padding: 10px;
+	display: block;
+}
+
+
+.nav-tabs .nav-link {	background: #ecffce;
+
+	/* IE 8 */
+  	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+  	/* IE 5-7 */
+  	filter: alpha(opacity=60);
+	/* Netscape */
+	-moz-opacity: 0.6;
+	-khtml-opacity: 0.6;
+	opacity: 0.6;
+
+}
+.nav-tabs .nav-link.active {
+	background-color: #a0d25e;
+    color: #fff;
+    font-weight: bold;
+
+	/* IE 8 */
+  	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  	/* IE 5-7 */
+  	filter: alpha(opacity=80);
+	/* Netscape */
+	-moz-opacity: 0.8;
+	-khtml-opacity: 0.8;
+	opacity: 0.8;
+
 }

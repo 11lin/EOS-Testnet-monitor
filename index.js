@@ -81,6 +81,9 @@ MongoClient.connect( CONFIG.mongoURL, function(err, db) {
 	        bc_parser.APIrequest(msg, socket);
 	    });
 
+		socket.on('register', function(msg){
+			bc_parser.register(msg, socket);
+		})
 	});
 });
 
